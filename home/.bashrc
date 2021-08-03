@@ -5,6 +5,11 @@ if [[ $- != *i* ]]; then
 	return
 fi
 
+# sensitive data
+if [[ -f ~/.bashrc.system ]]; then
+	source ~/.bashrc.system
+fi
+
 source /usr/lib/homeshick/homeshick.sh
 
 function exists() { type -P $1 >/dev/null 2>&1; }
@@ -54,10 +59,11 @@ exists fortune && fortune -ac
 # aliases
 #alias ssh='ssh -e\|'
 alias ls="$(type -P ls) --color=auto --group-directories-first -p"
-alias ll="$(type -P ls) --color=auto --group-directories-first -p -la"
+#alias ll="$(type -P ls) --color=auto --group-directories-first -p -la"
 #exists exa      && alias ls="$(type -P exa) --color=auto -F --group-directories-first --color-scale -g"
 alias grep="$(type -P grep) --color=auto"
 
+exists qrencode && alias qr='qrencode -t ANSIUTF8 -o -'
 
 #make-debug print-SOURCE_FILES
 alias make-debug='make --eval="print-%: ; @echo $*=$($*)"'
@@ -67,7 +73,7 @@ alias config_private='/usr/bin/git --git-dir=$HOME/.config/dotfiles_private.git/
 
 alias sync_caches='grep -e Dirty: -e Writeback: /proc/meminfo'
 
-export PATH=$PATH:~/.local/bin:~/.local/sbin:/sbin:/usr/sbin
+export PATH=~/bin:~/.local/bin:~/.local/sbin:$PATH:/sbin:/usr/sbin
 
 export LANG=en_US.UTF-8
 export LANGUAGE=en_US.UTF-8
@@ -77,11 +83,24 @@ if exists gopass; then
 	source <(gopass completion bash)
 fi
 
+if [[ -n $TMUX ]]; then
+	#echo "setting alternate screen"
+	tmux set alternate-screen off
+
+	#echo -ne '\e[?1049h' # Enable alternative screen buffer, from xterm
+	#echo -ne '\e[?1049l' # Disable alternative screen buffer, from xterm
+fi
+
+
+exists zssh && alias ssh=zssh
+alias ssh-ignore='ssh -- -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no'
+
 # sensitive data
 if [[ -f ~/.bashrc.local ]]; then
 	source ~/.bashrc.local
 fi
 
-unset -f exists
+exists starship && eval "$(starship init bash)"
 
+unset -f exists
 
