@@ -1,0 +1,24 @@
+" AngelFire's .vimrc file
+
+if !exists('g:vscode')
+	source $HOME/.vim/basics.vim
+	source $HOME/.vim/autocmds.vim
+	source $HOME/.vim/mappings.vim
+	source $HOME/.vim/commands.vim
+	source $HOME/.vim/syntax.vim
+	source $HOME/.vim/gui.vim
+	source $HOME/.vim/diff.vim
+
+	if has('nvim')
+		source $HOME/.vim/neovim.vim
+	endif
+
+	if exists("g:gui_oni")
+		source $HOME/.vim/gui_oni.vim
+	endif
+
+	source $HOME/.vim/plugins.vim
+endif
+
+
+

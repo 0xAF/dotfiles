@@ -1,0 +1,17 @@
+
+set enable-bracketed-paste on
+set bell-style none
+#set colored-completion-prefix on
+#set blink-matching-paren on
+set colored-stats on
+
+
+# alternate mappings for "page up" and "page down" to search the history
+"\e[5~": history-search-backward
+"\e[6~": history-search-forward
+
+# super+up super+down
+"\e[1;1A": history-search-backward
+"\e[1;1B": history-search-forward
+
+

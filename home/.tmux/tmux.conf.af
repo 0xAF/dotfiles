@@ -1,0 +1,315 @@
+
+
+# reload configuration
+bind r source-file ~/.tmux.conf \; display '~/.tmux.conf sourced'
+
+
+# open productivity sections
+#bind 'T' new-window -c /home/af/devel/tg/main/app -n mojo "./cli dev;bash -l" \; split-window -c /home/af/devel/tg/main/app/vue-components -l 47 -h "make App DEV=1;bash -l"
+bind 'T' run-shell "/home/af/devel/tg/main/app/tmux-dev.sh"
+
+# open a man page in new window
+bind 'M' command-prompt -p 'Show MAN page for:' "split-window -h 'exec man %%'"
+bind 'p' command-prompt -p 'Show perldoc page for:' "split-window -h 'exec perldoc %%'"
+bind 'P' command-prompt -p 'Show perldoc-f page for:' "split-window -h 'exec perldoc -f %%'"
+
+# sshch
+bind 's' new-window "~/.local/bin/sshch"
+
+# quick view of processes
+bind 'H' split-window -l 15 -b -v "exec htop"
+
+# set prefix key to ctrl+q
+unbind C-q
+set -g prefix C-q
+
+# create new window (normally with prefix-c, now with prefix-ctrl-c too)
+bind-key C-c new-window
+
+# new window in CWD with prefix-C
+bind-key C new-window -c '#{pane_current_path}'
+
+# send the prefix to client inside window (ala nested sessions)
+bind-key C-q send-prefix
+#bind-key q send-prefix
+
+# confirm before killing a window or the server
+bind-key k confirm kill-window
+bind-key K confirm kill-server
+
+# toggle statusbar
+bind-key b set-option status
+
+# Use Alt-arrow keys without prefix key to switch windows
+#bind -n M-Left previous-window
+#bind -n M-Right next-window
+
+# Use shift-arrow keys without prefix key to switch windows
+bind -n S-Left previous-window
+bind -n S-Right next-window
+
+# use <prefix>-space to go to last window
+bind Space last-window
+
+# move windows ctrl-alt-left/right
+#bind -n C-M-Left swap-window -t -1
+#bind -n C-M-Right swap-window -t +1
+
+# move windows ctrl-alt-left/right
+bind -n C-S-Left swap-window -d -t -1
+bind -n C-S-Right swap-window -d -t +1
+
+# Use Ctrl-arrow keys without prefix key to switch panes
+bind -n C-Left select-pane -L
+bind -n C-Right select-pane -R
+bind -n C-Up select-pane -U
+bind -n C-Down select-pane -D
+
+# alt-arrow keys resize panes
+bind -n M-Down resize-pane -D
+bind -n M-Up resize-pane -U
+bind -n M-Left resize-pane -L
+bind -n M-Right resize-pane -R
+
+#bind -n C-S-n new-window
+
+bind-key C-[ copy-mode
+
+bind-key -T copy-mode-vi Escape send-keys -X cancel
+bind-key -T copy-mode-vi Home send-keys -X start-of-line
+bind-key -T copy-mode-vi End send-keys -X end-of-line
+
+bind-key -n S-Up copy-mode -e \; send-keys -X halfpage-up
+bind-key -T copy-mode-vi S-Up send-keys -X halfpage-up
+bind-key -T copy-mode-vi S-Down send-keys -X halfpage-down
+bind-key -n S-Down refresh
+
+# these are not working for some reason
+#bind-key -n S-PPage copy-mode -e \; send-keys -X halfpage-up
+#bind-key -T copy-mode-vi S-PPage send-keys -X halfpage-up
+#bind-key -T copy-mode-vi S-NPage send-keys -X halfpage-down
+#bind-key -n S-NPage refresh
+
+bind-key -n C-PPage copy-mode -e \; send-keys -X halfpage-up
+bind-key -T copy-mode-vi C-PPage send-keys -X halfpage-up
+bind-key -T copy-mode-vi C-NPage send-keys -X halfpage-down
+bind-key -n C-NPage refresh
+
+bind-key -n WheelUpPane copy-mode -e
+
+bind-key -T copy-mode-vi WheelUpPane   select-pane \; send-keys -X -N 5 scroll-up
+bind-key -T copy-mode-vi WheelDownPane select-pane \; send-keys -X -N 5 scroll-down
+
+bind-key -T copy-mode-vi 'v' send -X begin-selection
+bind-key -T copy-mode-vi 'y' send -X copy-selection
+
+# prefix-q to copy the selected buffer to clipboard
+# Note: redirect the output to /dev/null, so STDOUT is closed,
+# because xclip will not close it by itself and tmux will keep waiting for xclip to close it
+bind-key q run-shell "tmux show-buffer | xclip -sel clip -i > /dev/null" \; display-message "Copied tmux buffer to system clipboard"
+
+bind-key -T copy-mode-vi 'Space' send -X halfpage-down
+bind-key -T copy-mode-vi 'Bspace' send -X halfpage-up
+
+bind | split-window -h
+bind - split-window -v
+
+unbind '"'
+unbind %
+
+
+
+set-window-option -g mouse off
+# Enable mouse
+set-window-option -g mouse on
+#bind -n WheelUpPane if-shell -F -t = "#{mouse_any_flag}" "send-keys -M" "if -Ft= '#{pane_in_mode}' 'send-keys -M' 'select-pane -t=; copy-mode -e; send-keys -M'"
+#bind -n WheelDownPane select-pane -t= \; send-keys -M
+
+
+# this should enable native scroll in xterm
+# set -g terminal-overrides 'xterm*:smcup@:rmcup@'
+#set -g terminal-overrides 'screen*:smcup@:rmcup@'
+#set -ga terminal-overrides ',xterm-256color:Tc'
+
+
+# No delay for escape key press
+#set -sg escape-time 100
+set -gs escape-time 0
+
+set -g status-keys vi
+setw -g mode-keys vi
+setw -g monitor-activity on
+
+# this enables pass through of ctrl-left/right to zsh (from FAQ)
+setw -g xterm-keys on
+
+# Default termtype. If the rcfile sets $TERM, that overrides this value.
+set -g default-terminal "screen-256color"
+#set -g default-terminal "xterm-256color"
+set -g terminal-overrides 'xterm:colors=256'
+
+# scrollback buffer n lines
+set -g history-limit 50000
+
+# listen for activity on all windows
+set -g bell-action any
+
+# on-screen time for display-panes in ms
+set -g display-panes-time 2000
+
+# start window indexing at one instead of zero
+set -g base-index 1
+# Make pane numbering consistent with windows
+setw -g pane-base-index 1
+
+# Renumber windows when a window is closed
+# This guarantees it will be easier for you to switch
+# between windows as you keep opening and closing them
+set -g renumber-windows on
+
+# Automatically set window title
+set-window-option -g automatic-rename on
+
+# enable wm window titles
+set -g set-titles on
+
+# wm window title string (uses statusbar variables)
+set -g set-titles-string "[#I.#P:#W]"
+
+# Disallow auto window renaming, stop tmux from renaming your windows
+set -g allow-rename off
+
+
+# THEME
+#set -g status-right 'Online:#{online_status} #[fg=green,bg=black]#($TMUX_PLUGIN_MANAGER_PATH/tmux-mem-cpu-load/tmux-mem-cpu-load -c -i1 -q -a0)#[default] #[fg=white]%H:%M#[default]'
+#set -g status-right 'Online:#{online_status} #{battery_status_fg} Batt: #{battery_icon} #{battery_percentage} #{battery_remain} #[default]#[fg=white]%H:%M#[default]'
+
+
+set -g status-interval 5
+
+set -g status-left-length 32
+set -g status-right-length 150
+
+set -g status-fg white
+set -g status-bg colour234
+#set -g window-status-current-bg white
+#set -g window-status-current-fg black
+#set -g window-status-current-attr bold
+#set -g window-status-activity-attr bold
+#set -g pane-border-fg colour245
+#set -g pane-active-border-fg colour39
+#set -g message-fg colour16
+#set -g message-bg colour221
+#set -g message-attr bold
+
+set -g status-left '\
+#[fg=colour235,bg=colour252,bold] ❐ #S \
+#[default] ┊ \
+#[fg=colour222,bg=colour235,bold]#h\
+#[default] ┊ \
+'
+
+set -g window-status-format "#[fg=white,bg=colour233] #I #[bg=colour238] #W "
+set -g window-status-current-format "#[fg=colour222,bg=colour27,noreverse,bold] #I #[fg=colour228,bg=colour33] #W "
+
+# #[default] ┊ \
+# D:#[fg=colour119,bold]#{download_speed}#[default] U:#[fg=colour135]#{upload_speed}\
+
+set -g status-right '\
+#[default] ┊ \
+#[fg=colour117,bold]#{public_ip}\
+#[default] ┊ \
+#{online_status}\
+#[default] ┊ \
+#[default]#{battery_status_fg}#{battery_icon} #{battery_percentage} \
+#[default] ┊ \
+#[default]#[fg=colour110]%H:%M#[default] \
+#{prefix_highlight}\
+'
+#   #[default]#[fg=colour110]%a %d %b %H:%M#[default] \
+
+
+
+
+# this will keep the screen instead of clearing it on exiting from neovim
+#set alternate-screen off
+
+
+# tmux plugin manager
+# add plugin here
+# prefix + I to install plugin
+# prefix + U to update plugins
+# prefix + alt+u to uninstall commented out plugin
+
+# some plugins: https://github.com/tmux-plugins
+## Other examples:
+## set -g @plugin 'github_username/plugin_name'
+## set -g @plugin 'git@github.com/user/plugin'
+## set -g @plugin 'git@bitbucket.com/user/plugin'
+
+#	thewtex/tmux-mem-cpu-load    \
+#	tmux-plugins/tmux-resurrect  \
+#	tmux-plugins/tmux-continuum \
+#	nhdaly/tmux-better-mouse-mode \
+#	tmux-plugins/tmux-net-speed \
+
+set -g @tpm_plugins '            \
+	tmux-plugins/tpm             \
+	tmux-plugins/tmux-sensible   \
+	seebi/tmux-colors-solarized  \
+	tmux-plugins/tmux-online-status \
+	0xAF/tmux-public-ip \
+	tmux-plugins/tmux-prefix-highlight \
+	tmux-plugins/tmux-battery \
+	nhdaly/tmux-better-mouse-mode \
+'
+#set -g @emulate-scroll-for-no-mouse-alternate-buffer "on"
+
+#set -g @continuum-restore 'on'
+#set -g @resurrect-capture-pane-contents 'on'
+
+set -g @colors-solarized '256'
+
+# tmux-prefix-highlight
+set -g @prefix_highlight_show_copy_mode 'on'
+set -g @prefix_highlight_copy_mode_attr 'fg=blue,bg=colour216' # default is 'fg=default,bg=yellow'
+
+set -g @net_speed_interfaces "eth0 wlan0"
+
+
+# tmux-battery  ⌁
+set -g @batt_icon_charge_tier1 "#[fg=colour196]🌕#[default]"
+set -g @batt_icon_charge_tier2 "#[fg=colour199]🌔#[default]"
+set -g @batt_icon_charge_tier3 "#[fg=colour202]🌔#[default]"
+set -g @batt_icon_charge_tier4 "#[fg=colour205]🌓#[default]"
+set -g @batt_icon_charge_tier5 "#[fg=colour208]🌓#[default]"
+set -g @batt_icon_charge_tier6 "#[fg=colour214]🌒#[default]"
+set -g @batt_icon_charge_tier7 "#[fg=colour190]🌒#[default]"
+set -g @batt_icon_charge_tier8 "#[fg=colour154]🌑#[default]"
+set -g @batt_icon_status_charged "#[fg=colour118]⚡#[default]"
+set -g @batt_icon_status_charging "#[fg=colour118]⤴ #[default]"
+set -g @batt_icon_status_discharging "#[fg=colour196]⤵ #[default]"
+
+
+# tmux-online-status
+set -g @online_icon "#[fg=colour118]✔#[default]"
+set -g @offline_icon "#[fg=colour196]✘#[default]"
+
+
+# Initialize TMUX plugin manager (keep this line at the very bottom of tmux.conf)
+run '~/.tmux/plugins/tpm/tpm'
+
+
+
+#### SESSION INITIALIZATION
+#new-session -s af
+#new-window -t af
+#new-window -t af
+#select-window -t 1
+
+
+# for yakuake profile:
+# tmux new-session -d -s yakuake1 'su -c "grc -c conf.log tail -F -n 150 /var/log/messages"' \; set -g status off \; split-window -d -p 60 htop \; attach
+
+
+# vim: ft=tmux :
