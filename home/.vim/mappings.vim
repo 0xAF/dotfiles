@@ -1,5 +1,7 @@
 " general mappings
 
+" yank whole line 'yy' (not just from cursor to the end 'y$')
+map Y yy
 
 " <space> is easier than \
 let mapleader = " "
