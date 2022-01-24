@@ -3,6 +3,7 @@
 # reload configuration
 bind r source-file ~/.tmux.conf \; display '~/.tmux.conf sourced'
 
+bind e new-window -n "~/.tmux/tmux.conf.af" "$EDITOR ~/.tmux/tmux.conf.af && tmux source ~/.tmux.conf && tmux display \"~/.tmux.conf sourced\""
 
 # open productivity sections
 #bind 'T' new-window -c /home/af/devel/tg/main/app -n mojo "./cli dev;bash -l" \; split-window -c /home/af/devel/tg/main/app/vue-components -l 47 -h "make App DEV=1;bash -l"
@@ -10,8 +11,12 @@ bind 'T' run-shell "/home/af/devel/tg/main/app/tmux-dev.sh"
 
 # open a man page in new window
 bind 'M' command-prompt -p 'Show MAN page for:' "split-window -h 'exec man %%'"
-bind 'p' command-prompt -p 'Show perldoc page for:' "split-window -h 'exec perldoc %%'"
-bind 'P' command-prompt -p 'Show perldoc-f page for:' "split-window -h 'exec perldoc -f %%'"
+#bind 'p' command-prompt -p 'Show perldoc page for:' "split-window -h 'exec perldoc %%'"
+#bind 'P' command-prompt -p 'Show perldoc-f page for:' "split-window -h 'exec perldoc -f %%'"
+
+#bind b list-buffers  # list paste buffers
+bind p paste-buffer  # paste from the top paste buffer
+bind P choose-buffer # choose which buffer to paste from
 
 # sshch
 bind 's' new-window "~/.local/bin/sshch"
@@ -135,6 +140,7 @@ set-window-option -g mouse on
 # No delay for escape key press
 #set -sg escape-time 100
 set -gs escape-time 0
+set -s focus-events on
 
 set -g status-keys vi
 setw -g mode-keys vi
@@ -144,9 +150,10 @@ setw -g monitor-activity on
 setw -g xterm-keys on
 
 # Default termtype. If the rcfile sets $TERM, that overrides this value.
-set -g default-terminal "screen-256color"
 #set -g default-terminal "xterm-256color"
 set -g terminal-overrides 'xterm:colors=256'
+set -g default-terminal "screen-256color"
+if 'infocmp -x tmux-256color > /dev/null 2>&1' 'set -g default-terminal "tmux-256color"'
 
 # scrollback buffer n lines
 set -g history-limit 50000
@@ -215,20 +222,28 @@ set -g window-status-current-format "#[fg=colour222,bg=colour27,noreverse,bold] 
 # #[default] ┊ \
 # D:#[fg=colour119,bold]#{download_speed}#[default] U:#[fg=colour135]#{upload_speed}\
 
+
+set -g @sysstat_cpu_view_tmpl 'C:#[fg=#{cpu.color}]#{cpu.pused}'
+set -g @sysstat_mem_view_tmpl 'M:#[fg=#{mem.color}]#{mem.pused}'
+
 set -g status-right '\
 #[default] ┊ \
-#[fg=colour117,bold]#{public_ip}\
+#[fg=colour117,bold]#{public_ip} (#{public_ip city})\
 #[default] ┊ \
 #{online_status}\
 #[default] ┊ \
-#[default]#{battery_status_fg}#{battery_icon} #{battery_percentage} \
+#[default]#{battery_status_fg}#{battery_icon}#{battery_percentage}\
 #[default] ┊ \
-#[default]#[fg=colour110]%H:%M#[default] \
-#{prefix_highlight}\
+#[default]#{sysstat_cpu}\
+#[default] ┊ \
+#[default]#{sysstat_mem}\
+#[default] ┊ \
+#{tmux_mode_indicator}\
 '
 #   #[default]#[fg=colour110]%a %d %b %H:%M#[default] \
-
-
+#[default]#[fg=colour110]%H:%M#[default] \
+#[default] ┊ \
+#{prefix_highlight}\
 
 
 # this will keep the screen instead of clearing it on exiting from neovim
@@ -252,6 +267,7 @@ set -g status-right '\
 #	tmux-plugins/tmux-continuum \
 #	nhdaly/tmux-better-mouse-mode \
 #	tmux-plugins/tmux-net-speed \
+#	tmux-plugins/tmux-prefix-highlight \
 
 set -g @tpm_plugins '            \
 	tmux-plugins/tpm             \
@@ -259,20 +275,32 @@ set -g @tpm_plugins '            \
 	seebi/tmux-colors-solarized  \
 	tmux-plugins/tmux-online-status \
 	0xAF/tmux-public-ip \
-	tmux-plugins/tmux-prefix-highlight \
 	tmux-plugins/tmux-battery \
 	nhdaly/tmux-better-mouse-mode \
+	samoshkin/tmux-plugin-sysstat \
+	MunifTanjim/tmux-mode-indicator \
 '
 #set -g @emulate-scroll-for-no-mouse-alternate-buffer "on"
 
 #set -g @continuum-restore 'on'
 #set -g @resurrect-capture-pane-contents 'on'
 
+
+set -g @mode_indicator_prefix_prompt '[P]'
+set -g @mode_indicator_copy_prompt   '[C]'
+set -g @mode_indicator_sync_prompt   '[S]'
+set -g @mode_indicator_empty_prompt  '[ ]'
+set -g @mode_indicator_prefix_mode_style 'fg=colour39,bg=colour234'
+set -g @mode_indicator_copy_mode_style   'fg=colour202,bg=colour234'
+set -g @mode_indicator_sync_mode_style   'fg=red,bg=colour234'
+set -g @mode_indicator_empty_mode_style  'fg=colour240,bg=colour234'
+
+
 set -g @colors-solarized '256'
 
 # tmux-prefix-highlight
-set -g @prefix_highlight_show_copy_mode 'on'
-set -g @prefix_highlight_copy_mode_attr 'fg=blue,bg=colour216' # default is 'fg=default,bg=yellow'
+#set -g @prefix_highlight_show_copy_mode 'on'
+#set -g @prefix_highlight_copy_mode_attr 'fg=blue,bg=colour216' # default is 'fg=default,bg=yellow'
 
 set -g @net_speed_interfaces "eth0 wlan0"
 
@@ -294,6 +322,12 @@ set -g @batt_icon_status_discharging "#[fg=colour196]⤵ #[default]"
 # tmux-online-status
 set -g @online_icon "#[fg=colour118]✔#[default]"
 set -g @offline_icon "#[fg=colour196]✘#[default]"
+
+
+
+# autiomatic install TPM
+if "test ! -d ~/.tmux/plugins/tpm" \
+	"run 'git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm && ~/.tmux/plugins/tpm/bin/install_plugins'"
 
 
 # Initialize TMUX plugin manager (keep this line at the very bottom of tmux.conf)
