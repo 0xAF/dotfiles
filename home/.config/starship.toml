@@ -1,0 +1,121 @@
+# Don't print a new line at the start of the prompt
+add_newline = false
+
+[aws]
+disabled = true
+
+# Replace the "❯" symbol in the prompt with "➜"
+[character]      # The name of the module we are confguring is "character"
+#symbol = ">"     # The "symbol" segment is being set to "➜"
+
+[c]
+disabled = true
+
+[perl]
+disabled = true
+
+[cmd_duration]
+disabled = true
+
+[conda]
+disabled = true
+
+[directory]
+truncation_length = 8
+
+[dotnet]
+disabled = true
+
+[elm]
+disabled = true
+
+[env_var]
+variable = "SHELL"
+default = "unknown shell"
+disabled = true
+
+[git_branch]
+disabled = false
+
+[git_commit]
+disabled = true
+
+[git_state]
+disabled = false
+
+[git_status]
+disabled = true
+
+[golang]
+disabled = true
+
+#[haskell]
+#disabled = true
+
+[hg_branch]
+disabled = true
+
+[hostname]
+ssh_only = false
+prefix = "⟪"
+suffix = "⟫"
+trim_at = ".0xaf.org"
+disabled = true
+
+#[jobs]
+#threshold = 0
+
+[kubernetes]
+disabled = true
+
+# The line_break module separates the prompt into two lines.
+[line_break]
+disabled = true
+
+[nix_shell]
+disabled = true
+
+[java]
+disabled = true
+
+[memory_usage]
+disabled = true
+show_percentage = true
+show_swap = false
+threshold = -1
+
+[crystal]
+disabled = true
+
+[nodejs]
+disabled = false
+detect_extensions = []
+
+# Disable the package module, hiding it from the prompt completely
+[package]
+disabled = true
+
+[php]
+disabled = true
+
+[python]
+disabled = true
+
+[ruby]
+disabled = true
+
+[rust]
+disabled = true
+
+[terraform]
+disabled = true
+
+[time]
+disabled = true
+format = "🕙[ %T ]"
+utc_time_offset = -5
+
+[username]
+disabled = false
+
+
