@@ -75,7 +75,7 @@ map <M-Left> :call AF_BP()<CR>
 map <M-Right> :call AF_BN()<CR>
 imap <M-Left> <ESC>:call AF_BP()<CR>a
 imap <M-Right> <ESC>:call AF_BN()<CR>a
-nmap <C-w> :bw<CR>
+"nmap <C-w> :bw<CR>
 
 map <F2> :call AF_HelpBuffer()<CR>
 

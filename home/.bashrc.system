@@ -258,7 +258,9 @@ export LESS="$LESS -i -R -M -X"
 export LESSCOLOR=yes
 exists lesspipe.sh	&& export LESSOPEN="|lesspipe.sh %s"
 exists lesspipe		&& export LESSOPEN="|lesspipe %s"
-exists pygmentize	&& export LESSCOLORIZER=pygmentize
+exists pygmentize	&& export LESSCOLORIZER="pygmentize -O style=monokai"
+#exists vimcolor		&& export LESSCOLORIZER=vimcolor
+#exists code2color	&& export LESSCOLORIZER=code2color
 exists less			&& export PAGER=$(type -P less)
 #exists vimpager	&& export PAGER=$(type -P vimpager) && alias less=$PAGER
 

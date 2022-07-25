@@ -93,7 +93,7 @@ fi
 
 
 exists zssh && alias ssh=zssh
-alias ssh-ignore='ssh -- -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no'
+alias ssh-ignore='ssh -- -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o IdentitiesOnly=yes '
 
 # sensitive data
 if [[ -f ~/.bashrc.local ]]; then
