@@ -1,0 +1,12 @@
+# AF
+
+eval $(ssh-agent)
+
+
+if [ -z "$(pidof xbindkeys)" ]; then
+	xbindkeys
+fi
+
+xmodmap ~/.xmodmap 2>/dev/null
+
+xset -b
